@@ -20,7 +20,7 @@ const JobSchema = new mongoose.Schema({
     jobType: {
         type: String,
         required: true,
-        enum: ["full-time", "part-time", "contract", "internship", "freelance"]
+        enum: ["Full-Time", "Part-Time", "Contract", "Internship", "Freelance"]
     },
     jobNature: {
         type: String,
@@ -40,16 +40,16 @@ const JobSchema = new mongoose.Schema({
         required: true
     },
     skillsRequired: {
-        type: String,
+        type: [String],
         required: true,
-        enum: ['React', 'JavaScript']
+        enum: ['React', 'JavaScript', 'HTML', 'CSS', 'MongoDB', 'Express']
     },
     information: {
         type: String,
         required: true
     },
     user: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     }
