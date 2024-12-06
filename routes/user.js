@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 const UserModel = require('../models/user.schema');              // Import the User model for database interaction
 
 dotenv.config();                                                 // Load environment variables from .env file
+
 //                              register route
 router.post('/register', async (req, res) => {
     const {name, email, mobile, password} = req.body;
@@ -33,6 +34,7 @@ router.post('/register', async (req, res) => {
         res.status(500).json({message: "Error in creating user"});
     }
 });
+
 //                              signin routee
 router.post('/singin', async (req, res) => {
     const {email, password} = req.body;

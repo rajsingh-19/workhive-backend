@@ -57,15 +57,57 @@ router.post('/', verifyUser, async (req, res) => {
 });
 
 //                                          Update the data
-// router.put('/:id', verifyUser, async (req, res) => {
-//     const {id} = req.params;
-//     const {companyName, addLogoUrl, jobPosition, monthlySalary, jobType, jobNature, location, jobDescription, aboutCompany, skillsRequired, information} = req.body;
-//     const job = await JobModel.findById(id);
-//     if(!job) {
-//         return res.status(404).json({message: "Job not found"});
-//     }
-    
-// });
+router.put('/:id', verifyUser, async (req, res) => {
+    const {id} = req.params;
+    const {companyName, addLogoUrl, jobPosition, monthlySalary, jobType, jobNature, location, jobDescription, aboutCompany, skillsRequired, information} = req.body;
+    const job = await JobModel.findById(id);                //search the job posted by its id 
+    //      check if the job post is present or not
+    if(!job) {
+        return res.status(404).json({message: "Job not found"});
+    };
+    //      check if the user is the actual owner of the job posted or not
+    if(job.user.toString() !== req.user.id) {               //user.toString() -> converts the objectId of user who created the job into string and req.user.id(user associated with the request)
+        res.status(401).json({message: "You are not authorized to modify the data"});
+    };
+    try {
+        await JobModel.findByIdAndUpdate(id, {
+            companyName,
+            addLogoUrl,
+            jobPosition,
+            monthlySalary,
+            jobType, 
+            jobNature, 
+            location, 
+            jobDescription, 
+            aboutCompany, 
+            skillsRequired,
+            information
+        });
+        res.status(200).json({ message: "Job updated" });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Error in updating job" });
+    }
+});
 
+
+//                                      delete the job
+router.delete('/:id', verifyUser, async (req, res) => {
+    const { id } = req.params;                          //retreive the id from the req params 
+    const job = await JobModel.findById(id);            //search the job from the db by its id
+    //                  assigning the req user id to the userId 
+    const userId = req.user.id;
+    //                  check if the job is present or not
+    if (!job) {
+        return res.status(404).json({ message: "Job not found" });
+    }
+    //                  check if the user is the job post owner or not
+    if (userId !== job.user.toString()) {
+        return res.status(401).json({ message: "You are not authorized to delete this job" });
+    }
+    // 
+    await JobModel.deleteOne({ _id: id });
+    res.status(200).json({ message: "Job deleted" });
+});
 
 module.exports = router;
