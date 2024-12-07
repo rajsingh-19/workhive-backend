@@ -9,8 +9,46 @@ dotenv.config();
 //                                  --Read the data--
 //                  get all the job data 
 router.get('/', async (req, res) => {
-    const jobs = await JobModel.find();
-    res.status(200).json(jobs);
+    try {
+        //          get all the job data
+        // const jobs = await JobModel.find();
+        // res.status(200).json(jobs);
+
+        //          PAGINATION : limit and offset ---> limit also knnown as size, pagesize, count  && offset also called as page, skip
+        // const {limit, offset} = req.query;                                    //fetching the limit and offest from the request query
+        // const jobs = await JobModel.find().skip(offset).limit(limit);         //applying offset and limit on the fetched job data
+        // res.status(200).json(jobs);
+
+        //          FILTERING 
+        //          Get the job data with only salary filter
+        // const {monthlySalary} =req.query;
+        // const filteredJobs = await JobModel.find({monthlySalary});
+        // res.status(200).json(filteredJobs);
+
+        //          Filter with salary between 51000 and 110000 ===== this will not work
+        // const {monthlySalary} = req.query;
+        // const filterJobs = await JobModel.find({monthlySalary: {$gte: 51000, $lte: 110000}});
+        // res.status(200).json(filterJobs);
+
+        //          Pagination with filtering
+        // const {offset, limit, monthlySalary} = req.query;
+        // const jobs = await JobModel.find({monthlySalary: {$gte: 50000, $lte: 110000}}).skip(offset).limit(limit);
+        // res.status(200).json(jobs);
+
+        //          pagination with filtering companyName and monthlySalary 
+        // const {offset, limit, companyName, monthlySalary} = req.query;
+        // const filteredJobs = await JobModel.find({companyName, monthlySalary}).skip(offset).limit(limit);
+        // res.status(200).json(filteredJobs);
+
+        //          pagin + filtering on companyname & monthlysalary but with also other types of string or case insensitive or sub strings
+        //          we have to use regular expressions (regex) in this such cases - applicable not on number
+        const {offset, limit, name, monthlySalary} = req.query;
+        const filteredJobs = await JobModel.find({companyName: {$regex : name, $options: 'i'}, monthlySalary}).skip(offset).limit(limit);
+        res.status(200).json(filteredJobs);
+        
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 //                  get a single job data           
 router.get('/:id', async (req, res) => {
