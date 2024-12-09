@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
+const cors = require('cors');
 const userRoute = require('./routes/user');
 const jobRoute = require('./routes/job');
 const connectMongoDB = require('./config/dbconfig');
@@ -10,12 +11,12 @@ const app = express();
 connectMongoDB();
 dotenv.config();
 
+app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
 
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.use('/api/user', userRoute);
 app.use('/api/job', jobRoute);
