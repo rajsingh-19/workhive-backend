@@ -10,6 +10,17 @@ dotenv.config();
 //                  get all the job data 
 router.get('/', async (req, res) => {
     try {
+        const {offset, limit, name, monthlySalary} = req.query;
+        const query = {}
+        if(name) {
+            query.companyName = {$regex: name, $options: "i"}
+        }
+        if(monthlySalary) {
+            query.monthlySalary = {$gte: monthlySalary, $lte: monthlySalary};
+        }
+        const jobs = await JobModel.find(query).skip(offset || 0).limit(limit || 10);
+        res.status(200).json(jobs);
+
         //          get all the job data
         // const jobs = await JobModel.find();
         // res.status(200).json(jobs);
@@ -42,9 +53,9 @@ router.get('/', async (req, res) => {
 
         //          pagin + filtering on companyname & monthlysalary but with also other types of string or case insensitive or sub strings
         //          we have to use regular expressions (regex) in this such cases - applicable not on number
-        const {offset, limit, name, monthlySalary} = req.query;
-        const filteredJobs = await JobModel.find({companyName: {$regex : name, $options: 'i'}, monthlySalary}).skip(offset).limit(limit);
-        res.status(200).json(filteredJobs);
+        // const {offset, limit, name, monthlySalary} = req.query;
+        // const filteredJobs = await JobModel.find({companyName: {$regex : name, $options: 'i'}, monthlySalary}).skip(offset).limit(limit);
+        // res.status(200).json(filteredJobs);
         
     } catch (error) {
         res.status(500).json({ error: error.message });
