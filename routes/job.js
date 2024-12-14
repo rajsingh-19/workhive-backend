@@ -5,9 +5,9 @@ const JobModel = require('../models/job.schema');
 const verifyUser = require('../middleware/auth');
 
 dotenv.config();
-
+ 
 //                                  --Read the data--
-//                  get all the job data 
+//                  get all the job data  
 router.get('/', async (req, res) => {
     try {
         const {offset, limit, name, monthlySalary} = req.query;
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
         if(monthlySalary) {
             query.monthlySalary = {$gte: monthlySalary, $lte: monthlySalary};
         }
-        const jobs = await JobModel.find(query).skip(offset || 0).limit(limit || 10);
+        const jobs = await JobModel.find(query).skip(offset || 0).limit(limit || 80);
         res.status(200).json(jobs);
 
         //          get all the job data
@@ -105,7 +105,7 @@ router.post('/', verifyUser, async (req, res) => {
     }
 });
 
-//                                          Update the data
+//                                          Update the data 
 router.put('/:id', verifyUser, async (req, res) => {
     const {id} = req.params;
     const {companyName, addLogoUrl, jobPosition, monthlySalary, jobType, jobNature, location, jobDescription, aboutCompany, skillsRequired, information} = req.body;
@@ -117,6 +117,7 @@ router.put('/:id', verifyUser, async (req, res) => {
     //      check if the user is the actual owner of the job posted or not
     if(job.user.toString() !== req.user.id) {               //user.toString() -> converts the objectId of user who created the job into string and req.user.id(user associated with the request)
         res.status(401).json({message: "You are not authorized to modify the data"});
+        return;
     };
     try {
         await JobModel.findByIdAndUpdate(id, {
