@@ -10,7 +10,7 @@ dotenv.config();
 //                  get all the job data  
 router.get('/', async (req, res) => {
     try {
-        const {offset, limit, name, monthlySalary} = req.query;
+        const {offset, limit, name, monthlySalary, skillsRequired} = req.query;
         const query = {}
         if(name) {
             query.companyName = {$regex: name, $options: "i"}
@@ -18,8 +18,15 @@ router.get('/', async (req, res) => {
         if(monthlySalary) {
             query.monthlySalary = {$gte: monthlySalary, $lte: monthlySalary};
         }
-        const jobs = await JobModel.find(query).skip(offset || 0).limit(limit || 80);
-        res.status(200).json(jobs);
+        if (skillsRequired) {
+            // all skills must be in the skills array
+            // query.skills = { $all: skills.split(",") };     // works likes and operator
+            // at least one skill must be in the skills array
+            query.skillsRequired = { $in: skillsRequired.split(",") };   // works like or operator
+        }
+        const jobs = await JobModel.find(query).skip(offset || 0).limit(limit || 20);
+        const count = await JobModel.countDocuments(query);                   //provide the total count of jobs matching the criteria, useful for pagination purposes
+        res.status(200).json({jobs, count});                        //res.json can only send one single object i.e., {jobs, count}
 
         //          get all the job data
         // const jobs = await JobModel.find();
