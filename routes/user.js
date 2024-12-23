@@ -36,7 +36,7 @@ router.post('/register', async (req, res) => {
 });
 
 //                              signin routee
-router.post('/singin', async (req, res) => {
+router.post('/signin', async (req, res) => {
     const {email, password} = req.body;
     const isUserValid = await UserModel.findOne({email});
     //          check if user is present or not
