@@ -53,7 +53,7 @@ const loginHandler = async (req, res) => {
     };
     //          create the JWT token with the payload, using a secret key from environment variables
     const token = jwt.sign(payload, process.env.JWT_SECRET);
-    // res.cookie("token", token);             // Store the token in a cookie named "token"
+
     return res.json({status: true, message: "Login Successfully", token: token});
 };
 
