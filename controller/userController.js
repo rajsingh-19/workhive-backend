@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const JobModel = require("../models/job.schema")                    // Import the User model for database interaction
+const UserModel = require("../models/user.schema");                 // Import the User model for database interaction
 
 dotenv.config();                                                    // Load environment variables from .env file
 
