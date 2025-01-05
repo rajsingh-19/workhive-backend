@@ -151,7 +151,7 @@ const deleteJob = async (req, res) => {
     try {
         const job = await JobModel.findById(id);            //search the job from the db by its id
         //                  check if the job is present or not
-        if (!job) {
+        if (!job.user) {
             return res.status(404).json({ message: "Job not found" });
         };
         //                  check if the user is the job post owner or not
@@ -159,13 +159,11 @@ const deleteJob = async (req, res) => {
             return res.status(401).json({ message: "You are not authorized to delete this job" });
         }; 
         await JobModel.deleteOne({ _id: id });
-        res.status(200).json({ message: "Job deleted" });
+        return res.status(200).json({ message: "Job deleted" });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Error in deleting the job", error});
-    }
-    
-    
+    }  
 };
 
 module.exports = { allJobData, getJobById, createJob, updateJob, deleteJob };
