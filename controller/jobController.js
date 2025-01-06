@@ -146,12 +146,18 @@ const updateJob = async (req, res) => {
 
 //      Delete a job by its Id
 const deleteJob = async (req, res) => {
-    const { id } = req.params;                          //retreive the id from the req params 
-    const userId = req.user.id;                         //assigning the req user id to the userId 
     try {
+        // Validate that the user is logged in
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ message: "Unauthorized: User not logged in" });
+        }
+
+        const { id } = req.params;                          //retreive the id from the req params 
+        const userId = req.user.id;                         //assigning the req user id to the userId 
+        
         const job = await JobModel.findById(id);            //search the job from the db by its id
         //                  check if the job is present or not
-        if (!job.user) {
+        if (!job) {
             return res.status(404).json({ message: "Job not found" });
         };
         //                  check if the user is the job post owner or not
